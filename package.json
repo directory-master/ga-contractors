@@ -1,0 +1,12 @@
+{
+  "name": "contractor",
+  "version": "0.9.0",
+  "private": true,
+  "type": "module",
+  "description": "GA.Contractors — streaming-style discovery for Georgia contractors. Prime Video rails × YouTube cards, cobalt-blue blueprint palette.",
+  "scripts": {
+    "build:pages": "node scripts/generate-pages.mjs",
+    "serve": "python3 -m http.server 8000",
+    "dev": "npm run build:pages && python3 -m http.server 8000"
+  }
+}

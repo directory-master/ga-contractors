@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+  <g fill="none" stroke="rgba(245,166,35,0.14)" stroke-width="1">
+    <path d="M0 .5H48 M0 24.5H48 M.5 0V48 M24.5 0V48"/>
+  </g>
+  <g fill="none" stroke="rgba(245,166,35,0.07)" stroke-width="1">
+    <path d="M0 12.5H48 M0 36.5H48 M12.5 0V48 M36.5 0V48"/>
+  </g>
+  <g fill="rgba(245,166,35,0.28)">
+    <rect x="23" y="23" width="3" height="3"/><rect x="0" y="0" width="2" height="2"/>
+  </g>
+</svg>

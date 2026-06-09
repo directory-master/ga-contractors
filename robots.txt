@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ga.contractors.artivicolab.com/sitemap.xml

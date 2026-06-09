@@ -1,0 +1,13 @@
+# dependencies (none at runtime — vanilla ES modules)
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+*.log
+Thumbs.db
+.vscode/
+.idea/
+
+# env / secrets
+.env
+.env.*
