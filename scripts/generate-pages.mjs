@@ -256,6 +256,7 @@ ${FONTS}
 ${jsonLd}
 </head>
 <body class="page">
+<noscript><div class="noscript"><div class="noscript__card"><span class="noscript__brand">${SITE_NAME}</span><h1>JavaScript is required</h1><p>You need to enable JavaScript to run this app.</p></div></div></noscript>
 ${NAV}
 <main id="app">
 ${body}

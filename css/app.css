@@ -723,9 +723,24 @@ h1.hero__eyebrow--place { margin: 0; font-size: .78rem; line-height: 1.3; }
 .spot-mi .spot-ic { width: 13px; height: 13px; }
 
 @media (max-width: 720px) {
-  .rail__track .spot { width: 86vw; min-height: 480px; }
+  /* tighter billboards on phones — shorter, smaller type, less padding */
+  .rail__track .spot { width: 86vw; min-height: 360px; border-radius: 20px; }
+  .rail__track .spot--std { min-height: 330px; }
   .spot-content, .spot-perks, .spot-pills-wrap { max-width: none; }
   .spot-bar { justify-content: flex-start; }
+  /* keep the photo subject from being cropped out on the right */
+  .spot-img { object-position: 72% center; }
+  .spot-top { padding: 14px 16px; }
+  .spot-content { padding: 0 16px 12px; }
+  .spot-bar { padding: 12px 16px 16px; }
+  .spot-name { font-size: clamp(1.4rem, 6vw, 1.85rem); }
+  .spot-desc { font-size: .9rem; margin-top: 8px; -webkit-line-clamp: 2; }
+  .spot-kicker { margin-top: 12px; }
+  .spot-perks { margin-top: 12px; }
+  .spot-perks-view { height: 44px; }
+  .spot-pills-wrap { margin-top: 10px; }
+  .spot-call { padding: 12px 22px; font-size: .92rem; }
+  .spot--std .spot-name { font-size: clamp(1.3rem, 5.5vw, 1.7rem); }
 }
 @media (prefers-reduced-motion: reduce) {
   .spot-img { animation: none; }
@@ -1151,3 +1166,20 @@ body.home.locbar-dismissed .footer { padding-bottom: 0; }
 .sheet__search:focus { outline: 0; border-color: var(--apricot); box-shadow: 0 0 0 4px rgba(31,95,224,.16); }
 .sheet__scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 6px 20px 22px; }
 .sheet__empty { color: var(--ink-faint); text-align: center; padding: 36px 10px; }
+
+/* ───────────────────────── No-JS fallback ─────────────────────────
+   The UI is rendered/wired by JavaScript (like a React SPA). With JS
+   disabled this <noscript> overlay shows the standard message; with JS
+   enabled it never renders and the app loads normally. */
+.noscript {
+  position: fixed; inset: 0; z-index: 99999;
+  display: grid; place-items: center; padding: 28px;
+  background: var(--cream); text-align: center;
+}
+.noscript__card {
+  max-width: 440px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 22px; padding: 36px 30px; box-shadow: var(--shadow-md);
+}
+.noscript__brand { font-family: "Poppins", sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--coral); letter-spacing: -.02em; }
+.noscript__card h1 { font-size: 1.45rem; margin: 16px 0 8px; }
+.noscript__card p { color: var(--ink-soft); line-height: 1.6; margin: 0; font-size: 1rem; }
