@@ -29,7 +29,7 @@
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#1750cc"/>
 <meta name="apple-mobile-web-app-title" content="GA.Contractors"/>
-<link rel="stylesheet" href="/css/app.css?v=0.11.0"/>
+<link rel="stylesheet" href="/css/app.css?v=0.12.0"/>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"GA.Contractors","item":"https://gac.artivicolab.com/"},{"@type":"ListItem","position":2,"name":"31404 (Savannah)","item":"https://gac.artivicolab.com/zip/31404/"}]},{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"GeneralContractor","name":"Brannen Construction Co","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"1311 E 59th St, Savannah, GA 31404"},"telephone":"(912) 355-1966","url":"http://www.brannenconstruction.com/","geo":{"@type":"GeoCoordinates","latitude":32.03455734,"longitude":-81.08705902},"aggregateRating":{"@type":"AggregateRating","ratingValue":5,"reviewCount":1}}},{"@type":"ListItem","position":2,"item":{"@type":"GeneralContractor","name":"Vinyl Industries-Savannah LLC","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"3005 Skidaway Rd, Savannah, GA 31404"},"telephone":"(912) 354-2223","url":"https://www.vinylindustries.net/","geo":{"@type":"GeoCoordinates","latitude":32.03724289,"longitude":-81.06596375},"aggregateRating":{"@type":"AggregateRating","ratingValue":2,"reviewCount":8}}},{"@type":"ListItem","position":3,"item":{"@type":"GeneralContractor","name":"SHC General Contractors","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"1110 E 40th St, Savannah, GA 31404-3408"},"telephone":"(912) 443-0905","url":"http://www.shcsavannah.com/","geo":{"@type":"GeoCoordinates","latitude":32.04988098,"longitude":-81.0838089}}},{"@type":"ListItem","position":4,"item":{"@type":"GeneralContractor","name":"Weimar Construction Co Inc","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"101 Estus Dr, Savannah, GA 31404"},"telephone":"(912) 443-0757","url":"https://www.weimarsavannah.com/","geo":{"@type":"GeoCoordinates","latitude":32.06338501,"longitude":-81.04715729}}},{"@type":"ListItem","position":5,"item":{"@type":"GeneralContractor","name":"Keith Ray Construction","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"2305 Rowland Ave 203, Savannah, GA 31404"},"telephone":"(912) 352-4676","url":"http://www.keithrayconstruction.com/","geo":{"@type":"GeoCoordinates","latitude":32.03632736,"longitude":-81.05908966}}},{"@type":"ListItem","position":6,"item":{"@type":"GeneralContractor","name":"Collins Construction Services","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"2135 Rowland Ave, Savannah, GA 31404"},"telephone":"(912) 233-2001","url":"http://www.collinsconstructioninc.com/","geo":{"@type":"GeoCoordinates","latitude":32.03864288,"longitude":-81.06325531}}},{"@type":"ListItem","position":7,"item":{"@type":"GeneralContractor","name":"Chatham Home Builders Inc","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"2247 E Victory Dr, Savannah, GA 31404"},"telephone":"(912) 234-3568","url":"http://www.chathamhomebuilders.com/","geo":{"@type":"GeoCoordinates","latitude":32.03797913,"longitude":-81.06016541}}},{"@type":"ListItem","position":8,"item":{"@type":"GeneralContractor","name":"Coastal Contractors & Installers, LLC","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"5507 Waters Ave, Savannah, GA 31404"},"telephone":"(912) 335-1049","url":"https://www.coastalcontractors.org/","geo":{"@type":"GeoCoordinates","latitude":32.02700043,"longitude":-81.09387207},"aggregateRating":{"@type":"AggregateRating","ratingValue":4.5,"reviewCount":12}}},{"@type":"ListItem","position":9,"item":{"@type":"GeneralContractor","name":"Lammons Construction Co","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"2805 Roger Lacey Ave, Savannah, GA 31404"},"telephone":"(912) 898-4751","url":"http://lammonsconstruction.com/","geo":{"@type":"GeoCoordinates","latitude":32.03712463,"longitude":-81.06145477}}},{"@type":"ListItem","position":10,"item":{"@type":"GeneralContractor","name":"Hellcat Construction","address":{"@type":"PostalAddress","addressLocality":"Savannah","addressRegion":"GA","postalCode":"31404","streetAddress":"2126 E Victory Dr, Savannah, GA 31404"},"telephone":"(912) 268-3026","geo":{"@type":"GeoCoordinates","latitude":32.04152298,"longitude":-81.06295013}}}]}]}</script>
 </head>
 <body class="page">
@@ -474,7 +474,7 @@
     </nav>
   </div>
   <div class="footer__bar">
-    <small>© 2026 GA.Contractors · v0.11.0</small>
+    <small>© 2026 GA.Contractors · v0.12.0</small>
     <small class="footer__made">Made in Georgia by <a href="https://artivicolab.com" rel="noopener">Artivicolab</a></small>
   </div>
 </footer>
@@ -506,7 +506,7 @@
 <div class="modal" id="modal" hidden>
   <div class="modal__backdrop" data-close></div>
   <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-    <div class="modal__grab" data-close aria-hidden="true"></div>
+    <div class="modal__grab" id="modalGrab" aria-hidden="true"></div>
     <button class="modal__close" data-close aria-label="Close">✕</button>
     <div class="modal__hero" id="mHero"></div>
     <div class="modal__content">
@@ -518,6 +518,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="/js/page.js?v=0.11.0"></script>
+<script type="module" src="/js/page.js?v=0.12.0"></script>
 </body>
 </html>

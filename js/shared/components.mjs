@@ -127,3 +127,13 @@ export function spotCardHTML(c, premium) {
     </div>
   </article>`;
 }
+
+/* ---------- place tile (city / county / ZIP, with map thumbnail) ----------
+   Single source of truth for the map-thumbnail tiles used on the hub pages,
+   the home "Browse Georgia" rail, and the Browse sheet. */
+export const placetileHTML = ({ href, name, count, lat, lng, z = 11 }) => {
+  const bg = (lat && lng)
+    ? ` style="background-image:linear-gradient(0deg, rgba(20,28,46,.78) 8%, rgba(20,28,46,.12) 60%), url('${tileUrl(lat, lng, z)}')"`
+    : '';
+  return `<a class="placetile" href="${href}"${bg}><span class="placetile__name">${esc(name)}</span><span class="placetile__count">${count.toLocaleString()} pros</span></a>`;
+};

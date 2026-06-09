@@ -27,7 +27,7 @@ import { esc, slugify, hash, initials, ratingScore, telHref, openStatus, fmtCloc
 import { PALETTE, colorFor, STOCK, stockFor, tintedBg } from '../js/shared/palette.mjs';
 import { tileUrl, PIN_SVG } from '../js/shared/geo.mjs';
 import { SPOT_SPRITE, spotUse, perkIcon } from '../js/shared/icons.mjs';
-import { CLAIM_EMAIL, cardHTML, claimCardHTML, ownCardHTML, spotCardHTML } from '../js/shared/components.mjs';
+import { CLAIM_EMAIL, cardHTML, claimCardHTML, ownCardHTML, spotCardHTML, placetileHTML } from '../js/shared/components.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const VERSION = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version;
@@ -266,7 +266,7 @@ ${TABBAR}
 ${zipScript}${dataScript}<div class="modal" id="modal" hidden>
   <div class="modal__backdrop" data-close></div>
   <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-    <div class="modal__grab" data-close aria-hidden="true"></div>
+    <div class="modal__grab" id="modalGrab" aria-hidden="true"></div>
     <button class="modal__close" data-close aria-label="Close">✕</button>
     <div class="modal__hero" id="mHero"></div>
     <div class="modal__content">
@@ -304,13 +304,6 @@ function railHTML({ title, accent, sub, cardsHtml, label = '' }) {
 
 // mini-map city/county tile — the "Browse Georgia" look, reused by the nearby
 // rail and the cities/counties hub grids.
-const placetileHTML = ({ href, name, count, lat, lng, z = 11 }) => {
-  const bg = (lat && lng)
-    ? ` style="background-image:linear-gradient(0deg, rgba(20,28,46,.78) 8%, rgba(20,28,46,.12) 60%), url('${tileUrl(lat, lng, z)}')"`
-    : '';
-  return `<a class="placetile" href="${href}"${bg}><span class="placetile__name">${esc(name)}</span><span class="placetile__count">${count.toLocaleString()} pros</span></a>`;
-};
-
 function gridHTML(title, cardsHtml, sortable = false) {
   const sort = sortable ? `<label class="sortbar">Sort by
     <select class="sortbar__select" data-sort aria-label="Sort contractors">

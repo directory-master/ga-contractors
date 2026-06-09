@@ -29,7 +29,7 @@
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#1750cc"/>
 <meta name="apple-mobile-web-app-title" content="GA.Contractors"/>
-<link rel="stylesheet" href="/css/app.css?v=0.11.0"/>
+<link rel="stylesheet" href="/css/app.css?v=0.12.0"/>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"GA.Contractors","item":"https://gac.artivicolab.com/"},{"@type":"ListItem","position":2,"name":"30506 (Gainesville)","item":"https://gac.artivicolab.com/zip/30506/"}]},{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"HomeAndConstructionBusiness","name":"Michael James Remodeling","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"3473 Thompson Bridge Rd, Gainesville, GA 30506"},"telephone":"(770) 462-9238","url":"https://michaeljamesremodeling.com/","geo":{"@type":"GeoCoordinates","latitude":34.36388016,"longitude":-83.866539}}},{"@type":"ListItem","position":2,"item":{"@type":"GeneralContractor","name":"Torres Homes LLC","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"6615 Lakeshore Dr, Gainesville, GA 30506"},"telephone":"(770) 913-7072","url":"http://www.torreshomesllc.com/","geo":{"@type":"GeoCoordinates","latitude":34.39080048,"longitude":-83.96849823}}},{"@type":"ListItem","position":3,"item":{"@type":"GeneralContractor","name":"Douglas Residential, Inc","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"8665 Loy Ln, Gainesville, GA 30506"},"telephone":"(404) 483-3544","url":"https://douglasresidentialrenovations.com/","geo":{"@type":"GeoCoordinates","latitude":34.27629471,"longitude":-83.99562836}}},{"@type":"ListItem","position":4,"item":{"@type":"GeneralContractor","name":"Encore Construction","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"5701 Saddle Club Rd, Gainesville, GA 30506"},"telephone":"(470) 577-3314","url":"http://www.getmorewithencore.com/","geo":{"@type":"GeoCoordinates","latitude":34.35958099,"longitude":-83.93993378}}},{"@type":"ListItem","position":5,"item":{"@type":"GeneralContractor","name":"Falcon Landing Townhomes by D.R. Horton","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"4128 Smokerise Ct, Gainesville, GA 30506"},"telephone":"(770) 691-1861","url":"https://www.drhorton.com/georgia/atlanta/gainesville/falcon-landing-townhomes","geo":{"@type":"GeoCoordinates","latitude":34.34068298,"longitude":-83.95381165}}},{"@type":"ListItem","position":6,"item":{"@type":"GeneralContractor","name":"Port Royale Estates","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"8800 Port Royale Dr, Gainesville, GA 30506"},"telephone":"(678) 462-4763","url":"http://www.loweproperties.com/","geo":{"@type":"GeoCoordinates","latitude":34.25014496,"longitude":-83.96585083}}},{"@type":"ListItem","position":7,"item":{"@type":"GeneralContractor","name":"AR Homes Gainesville, GA Office (RLW Homes, Inc.)","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"3204 Dunlap Dr, Gainesville, GA 30506"},"telephone":"(770) 534-2826","url":"https://www.arhomes.com/builder/rlw-homes-inc/","geo":{"@type":"GeoCoordinates","latitude":34.35604477,"longitude":-83.85359955}}},{"@type":"ListItem","position":8,"item":{"@type":"GeneralContractor","name":"Falcon Landing by D.R. Horton","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"Gainesville, GA 30506"},"telephone":"(678) 967-0132","url":"https://www.drhorton.com/georgia/atlanta/gainesville/falcon-landing","geo":{"@type":"GeoCoordinates","latitude":34.34467316,"longitude":-83.95158386}}},{"@type":"ListItem","position":9,"item":{"@type":"GeneralContractor","name":"Steven West Custom Homes Inc.","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"9030 Hawks Cove Rd, Gainesville, GA 30506"},"telephone":"(404) 925-4203","url":"http://www.stevenwestcustomhomes.com/","geo":{"@type":"GeoCoordinates","latitude":34.22642136,"longitude":-84.00271606}}},{"@type":"ListItem","position":10,"item":{"@type":"GeneralContractor","name":"Lanier Construction LLC","address":{"@type":"PostalAddress","addressLocality":"Gainesville","addressRegion":"GA","postalCode":"30506","streetAddress":"6311 Sparrow Ct, Gainesville, GA 30506"},"telephone":"(770) 297-7555","geo":{"@type":"GeoCoordinates","latitude":34.38768005,"longitude":-83.98056793}}}]}]}</script>
 </head>
 <body class="page">
@@ -474,7 +474,7 @@
     </nav>
   </div>
   <div class="footer__bar">
-    <small>© 2026 GA.Contractors · v0.11.0</small>
+    <small>© 2026 GA.Contractors · v0.12.0</small>
     <small class="footer__made">Made in Georgia by <a href="https://artivicolab.com" rel="noopener">Artivicolab</a></small>
   </div>
 </footer>
@@ -506,7 +506,7 @@
 <div class="modal" id="modal" hidden>
   <div class="modal__backdrop" data-close></div>
   <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-    <div class="modal__grab" data-close aria-hidden="true"></div>
+    <div class="modal__grab" id="modalGrab" aria-hidden="true"></div>
     <button class="modal__close" data-close aria-label="Close">✕</button>
     <div class="modal__hero" id="mHero"></div>
     <div class="modal__content">
@@ -518,6 +518,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="/js/page.js?v=0.11.0"></script>
+<script type="module" src="/js/page.js?v=0.12.0"></script>
 </body>
 </html>

@@ -29,7 +29,7 @@
 <link rel="manifest" href="/manifest.json"/>
 <meta name="theme-color" content="#1750cc"/>
 <meta name="apple-mobile-web-app-title" content="GA.Contractors"/>
-<link rel="stylesheet" href="/css/app.css?v=0.11.0"/>
+<link rel="stylesheet" href="/css/app.css?v=0.12.0"/>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"GA.Contractors","item":"https://gac.artivicolab.com/"},{"@type":"ListItem","position":2,"name":"30517 (Braselton)","item":"https://gac.artivicolab.com/zip/30517/"}]},{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"HomeAndConstructionBusiness","name":"TRiO Construction Exteriors & Remodeling","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"134 Zion Church Rd, Braselton, GA 30517"},"telephone":"(678) 288-4819","url":"https://www.triorc.com/","geo":{"@type":"GeoCoordinates","latitude":34.11685181,"longitude":-83.7602005}}},{"@type":"ListItem","position":2,"item":{"@type":"GeneralContractor","name":"Asa Carlton Inc","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"100 Braselton Pkwy, Braselton, GA 30517"},"telephone":"(770) 945-2195","url":"https://asacarlton.com/","geo":{"@type":"GeoCoordinates","latitude":34.1192131,"longitude":-83.82778931}}},{"@type":"ListItem","position":3,"item":{"@type":"GeneralContractor","name":"Braselton Village by D.R. Horton","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"1279 Braselton Village Pkwy, Braselton, GA 30517"},"telephone":"(678) 940-6579","url":"https://www.drhorton.com/georgia/atlanta/braselton/braselton-village","geo":{"@type":"GeoCoordinates","latitude":34.10335159,"longitude":-83.81108856}}},{"@type":"ListItem","position":4,"item":{"@type":"GeneralContractor","name":"Crossvine Estates by Fischer Homes","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"25 Traminer Wy, Braselton, GA 30517"},"telephone":"(404) 620-6814","url":"https://www.fischerhomes.com/find-new-homes/communities/872/crossvine-estates/","geo":{"@type":"GeoCoordinates","latitude":34.1161499,"longitude":-83.74529266}}},{"@type":"ListItem","position":5,"item":{"@type":"GeneralContractor","name":"Essential Construction & Maintenance Services, LLC","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"935 GA-124 Suite 211, Braselton, GA 30517"},"telephone":"(678) 712-1621","url":"http://ecmsllc.com/","geo":{"@type":"GeoCoordinates","latitude":34.09686279,"longitude":-83.80567169}}},{"@type":"ListItem","position":6,"item":{"@type":"GeneralContractor","name":"The Reserve at Liberty Park New Homes in Braselton by Fischer Homes","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"1201 Liberty Park Dr, Braselton, GA 30517"},"telephone":"(404) 620-6814","url":"https://www.fischerhomes.com/find-new-homes/communities/263/the-reserve-at-liberty-park/","geo":{"@type":"GeoCoordinates","latitude":34.13445663,"longitude":-83.80323029}}},{"@type":"ListItem","position":7,"item":{"@type":"GeneralContractor","name":"Wathco","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"5470 Technology Pkwy, Braselton, GA 30517"},"telephone":"(770) 967-8180","url":"https://www.wathco.com/","geo":{"@type":"GeoCoordinates","latitude":34.14884186,"longitude":-83.80345154}}},{"@type":"ListItem","position":8,"item":{"@type":"GeneralContractor","name":"Southern Classic Construction","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"30 Cronic Cir, Braselton, GA 30517"},"telephone":"(770) 685-0288","url":"http://georgiahorsearenas.com/","geo":{"@type":"GeoCoordinates","latitude":34.11545563,"longitude":-83.79463959}}},{"@type":"ListItem","position":9,"item":{"@type":"GeneralContractor","name":"Incredible Installations LLC","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"1394 Broadway Ave, Braselton, GA 30517"},"telephone":"(770) 450-0458","url":"https://incredibleinstallations.com/","geo":{"@type":"GeoCoordinates","latitude":34.10390091,"longitude":-83.78712463}}},{"@type":"ListItem","position":10,"item":{"@type":"GeneralContractor","name":"BM&K Construction & Engineering","address":{"@type":"PostalAddress","addressLocality":"Braselton","addressRegion":"GA","postalCode":"30517","streetAddress":"6700 Highway 53, Braselton, GA 30517"},"telephone":"(706) 824-0514","url":"http://bmandk.com/","geo":{"@type":"GeoCoordinates","latitude":34.13101578,"longitude":-83.76591492}}}]}]}</script>
 </head>
 <body class="page">
@@ -474,7 +474,7 @@
     </nav>
   </div>
   <div class="footer__bar">
-    <small>© 2026 GA.Contractors · v0.11.0</small>
+    <small>© 2026 GA.Contractors · v0.12.0</small>
     <small class="footer__made">Made in Georgia by <a href="https://artivicolab.com" rel="noopener">Artivicolab</a></small>
   </div>
 </footer>
@@ -506,7 +506,7 @@
 <div class="modal" id="modal" hidden>
   <div class="modal__backdrop" data-close></div>
   <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-    <div class="modal__grab" data-close aria-hidden="true"></div>
+    <div class="modal__grab" id="modalGrab" aria-hidden="true"></div>
     <button class="modal__close" data-close aria-label="Close">✕</button>
     <div class="modal__hero" id="mHero"></div>
     <div class="modal__content">
@@ -518,6 +518,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="/js/page.js?v=0.11.0"></script>
+<script type="module" src="/js/page.js?v=0.12.0"></script>
 </body>
 </html>

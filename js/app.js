@@ -14,7 +14,7 @@ import { colorFor, tintedBg } from './shared/palette.mjs';
 import { tileUrl } from './shared/geo.mjs';
 import { SPOT_SPRITE, spotUse } from './shared/icons.mjs';
 import { loadLeaflet, mapPin, observeCardMap } from './shared/maps.mjs';
-import { cardHTML, spotCardHTML, claimCardHTML, CLAIM_EMAIL } from './shared/components.mjs';
+import { cardHTML, spotCardHTML, claimCardHTML, placetileHTML, CLAIM_EMAIL } from './shared/components.mjs';
 import { track, wireLinkTracking } from './shared/analytics.mjs';
 
 /* ---------- 1. Prepare the data ---------------------------- */
@@ -240,14 +240,9 @@ function renderBrowse() {
     <span class="browse__hero-name">${ALL.length.toLocaleString()} licensed contractors</span>
     <span class="browse__hero-cta">Explore every city →</span>`;
 
-  // top cities → two rows of mini-map tiles that scroll horizontally
-  const tiles = CITIES.slice(0, 24).map(([name, list]) => {
-    const a = el('a', 'placetile'); a.href = `/${list[0].city}/`;
-    const pt = list.find(c => c.lat && c.lng) || list[0];
-    if (pt.lat && pt.lng) a.style.backgroundImage = `linear-gradient(0deg, rgba(20,28,46,.78) 8%, rgba(20,28,46,.12) 60%), url("${tileUrl(pt.lat, pt.lng, 11)}")`;
-    a.innerHTML = `<span class="placetile__name">${esc(name)}</span><span class="placetile__count">${list.length.toLocaleString()} pros</span>`;
-    return a;
-  });
+  // top cities → two rows of mini-map tiles that scroll horizontally (shared component)
+  const tiles = CITIES.slice(0, 24).map(([name, list]) =>
+    nodeFrom(placetileHTML({ href: `/${list[0].city}/`, name, count: list.length, ...coordOf(list), z: 11 })));
 
   const layout = el('div', 'browse__layout');
   layout.append(hero, railViewport(tiles, 'rail__track--grid2'));
@@ -262,12 +257,7 @@ function renderBrowse() {
 }
 
 /* ---------- Browse sheet (iOS-style: tabs + map tiles) ----- */
-function browseTile(t) {
-  const a = el('a', 'placetile'); a.href = t.href;
-  if (t.lat && t.lng) a.style.backgroundImage = `linear-gradient(0deg, rgba(20,28,46,.82) 6%, rgba(20,28,46,.12) 58%), url("${tileUrl(t.lat, t.lng, t.z || 11)}")`;
-  a.innerHTML = `<span class="placetile__name">${esc(t.name)}</span><span class="placetile__count">${t.count.toLocaleString()} pros</span>`;
-  return a;
-}
+const browseTile = (t) => nodeFrom(placetileHTML(t));   // same shared component as the hubs + home rail
 let browseSeg = 'cities', browseQ = '';
 function renderBrowseGrid() {
   const grid = $('#browseGrid'); if (!grid) return;
@@ -455,6 +445,23 @@ function openModal(c) {
   }
 }
 function closeModal() { $('#modal').hidden = true; document.body.style.overflow = ''; }
+
+// iOS sheet: drag the grabber down to dismiss (mobile); a tap closes; small drag snaps back.
+function enableSheetSwipe(modalSel, closeFn) {
+  const panel = document.querySelector(`${modalSel} .modal__panel`);
+  const grab = panel?.querySelector('.modal__grab');
+  if (!panel || !grab) return;
+  let y0 = null, moved = 0;
+  grab.style.touchAction = 'none';
+  grab.addEventListener('pointerdown', (e) => { y0 = e.clientY; moved = 0; panel.style.transition = 'none'; try { grab.setPointerCapture(e.pointerId); } catch { /* ignore */ } });
+  grab.addEventListener('pointermove', (e) => { if (y0 == null) return; moved = Math.max(0, e.clientY - y0); panel.style.transform = `translateY(${moved}px)`; });
+  const end = () => {
+    if (y0 == null) return; y0 = null; panel.style.transition = 'transform .25s ease';
+    if (moved > 110) { panel.style.transform = 'translateY(110%)'; setTimeout(() => { closeFn(); panel.style.transform = ''; panel.style.transition = ''; }, 200); }
+    else { panel.style.transform = ''; if (moved < 6) closeFn(); }
+  };
+  grab.addEventListener('pointerup', end); grab.addEventListener('pointercancel', end);
+}
 
 // A no-photo listing's modal media = a live map of its location (+ user pin /
 // distance when known). Reuses initMiniMap.
@@ -652,9 +659,6 @@ function init() {
   showRows();
 
   reflectLoc();
-  // On phones the bottom tab bar is the single persistent bar — keep the floating
-  // location bar collapsed by default so they don't stack; "Nearby" opens it.
-  if (window.matchMedia('(max-width: 720px)').matches) { $('#locBar').hidden = true; document.body.classList.add('locbar-dismissed'); }
   $('#locBtn')?.addEventListener('click', useMyLocation);
   // dismiss → collapse to the floating reopen button (don't vanish forever)
   $('#locClose')?.addEventListener('click', () => {
@@ -696,6 +700,8 @@ function init() {
   });
   $('#browseSearch')?.addEventListener('input', (e) => { browseQ = e.target.value; renderBrowseGrid(); });
 
+  enableSheetSwipe('#modal', closeModal);
+
   // bottom tab bar (mobile)
   const setTab = (id) => document.querySelectorAll('.tabbar__item').forEach(t => t.classList.toggle('is-active', t.id === id));
   $('#tabHome')?.addEventListener('click', () => { setTab('tabHome'); activeChip = 'all'; renderChips(); showRows(); });
@@ -703,7 +709,11 @@ function init() {
   $('#tabBrowse')?.addEventListener('click', () => { setTab('tabBrowse'); openBrowse(); });
   $('#tabNearby')?.addEventListener('click', () => {
     setTab('tabNearby');
-    if ($('#locBar').hidden) { $('#locReopen').hidden = true; $('#locBar').hidden = false; document.body.classList.remove('locbar-dismissed'); }
+    // phones: geolocate directly (the floating location bar is hidden on mobile);
+    // desktop: also surface the bar so ZIP entry stays available.
+    if (!window.matchMedia('(max-width: 720px)').matches && $('#locBar')?.hidden) {
+      $('#locReopen').hidden = true; $('#locBar').hidden = false; document.body.classList.remove('locbar-dismissed');
+    }
     useMyLocation();
   });
 

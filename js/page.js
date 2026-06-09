@@ -474,9 +474,6 @@ if (savedZip && $('#zipInput')) $('#zipInput').value = savedZip;
 })();
 
 reflectLoc();
-// On phones the bottom tab bar is the single persistent bar — keep the floating
-// location bar collapsed by default so they don't stack; "Nearby" opens it.
-if (window.matchMedia('(max-width: 720px)').matches) { const lb = $('#locBar'); if (lb) lb.hidden = true; document.body.classList.add('locbar-dismissed'); }
 refreshCardDistances();   // a location restored from localStorage → badge cards now
 upgradeCardMaps();        // no-photo cards → live centred maps (lazy)
 wireLinkTracking(() => lastOpen ? { listing_id: lastOpen.id, listing_name: lastOpen.name, city: lastOpen.cityName } : {});
@@ -503,8 +500,22 @@ $('#zipWrap')?.addEventListener('submit', (e) => {
 });
 $('#zipInput')?.addEventListener('input', () => $('#zipInput').setCustomValidity(''));
 
-// bottom-tab "Nearby" — reveal the location bar (also acts as its reopen) + locate
-$('#tabNearby')?.addEventListener('click', () => {
-  const bar = $('#locBar'); if (bar) { bar.hidden = false; document.body.classList.remove('locbar-dismissed'); }
-  useMyLocation();
-});
+// bottom-tab "Nearby" — geolocate directly (the floating location bar is hidden on phones)
+$('#tabNearby')?.addEventListener('click', () => { useMyLocation(); });
+
+// iOS sheet: drag the grabber down to dismiss (mobile); tap closes; small drag snaps back.
+(function () {
+  const panel = document.querySelector('#modal .modal__panel');
+  const grab = panel?.querySelector('.modal__grab');
+  if (!panel || !grab) return;
+  let y0 = null, moved = 0;
+  grab.style.touchAction = 'none';
+  grab.addEventListener('pointerdown', (e) => { y0 = e.clientY; moved = 0; panel.style.transition = 'none'; try { grab.setPointerCapture(e.pointerId); } catch { /* ignore */ } });
+  grab.addEventListener('pointermove', (e) => { if (y0 == null) return; moved = Math.max(0, e.clientY - y0); panel.style.transform = `translateY(${moved}px)`; });
+  const end = () => {
+    if (y0 == null) return; y0 = null; panel.style.transition = 'transform .25s ease';
+    if (moved > 110) { panel.style.transform = 'translateY(110%)'; setTimeout(() => { closeModal(); panel.style.transform = ''; panel.style.transition = ''; }, 200); }
+    else { panel.style.transform = ''; if (moved < 6) closeModal(); }
+  };
+  grab.addEventListener('pointerup', end); grab.addEventListener('pointercancel', end);
+})();
