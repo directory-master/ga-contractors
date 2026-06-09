@@ -6,6 +6,7 @@
 // ============================================================
 import { IMPORTED } from './data/contractors-imported.js';
 import { FEATURED } from './data/featured.js';
+import { CITY_COUNTY, countySlug } from './data/ga-counties.js';
 // shared, reusable helpers — single source of truth (js/shared/), also imported
 // by the generator and page.js.
 import { esc, hash, initials, ratingScore, fmtMi, milesBetween } from './shared/format.mjs';
@@ -14,6 +15,7 @@ import { tileUrl } from './shared/geo.mjs';
 import { SPOT_SPRITE, spotUse } from './shared/icons.mjs';
 import { loadLeaflet, mapPin, observeCardMap } from './shared/maps.mjs';
 import { cardHTML, spotCardHTML, claimCardHTML, CLAIM_EMAIL } from './shared/components.mjs';
+import { track, wireLinkTracking } from './shared/analytics.mjs';
 
 /* ---------- 1. Prepare the data ---------------------------- */
 
@@ -52,6 +54,19 @@ const CITIES = byCount(ALL, 'cityName');
 const RATED  = ALL.filter(c => c.rating).sort((a, b) => b._score - a._score);
 const WITHIMG = ALL.filter(c => c._hasImg);
 const FRESH = shuffle(WITHIMG).slice(0, 24);   // stable per session
+
+/* ---------- Browse-sheet data (cities / counties / ZIPs ≥5) ---------- */
+const coordOf = (list) => { const p = list.find(c => c.lat && c.lng); return p ? { lat: p.lat, lng: p.lng } : {}; };
+const groupBy = (key) => { const m = new Map(); for (const c of ALL) { const k = key(c); if (!k) continue; (m.get(k) || m.set(k, []).get(k)).push(c); } return m; };
+const BROWSE = {
+  cities: CITIES.filter(([, l]) => l.length >= 5).map(([name, l]) => ({ href: `/${l[0].city}/`, name, count: l.length, z: 11, ...coordOf(l) })),
+  counties: [...groupBy(c => CITY_COUNTY[c.city])].filter(([, l]) => l.length >= 5)
+    .map(([cn, l]) => ({ href: `/county/${countySlug(cn)}/`, name: `${cn} County`, count: l.length, z: 9, ...coordOf(l) }))
+    .sort((a, b) => b.count - a.count),
+  zips: [...groupBy(c => (/^\d{5}$/.test(String(c.zip || '')) ? String(c.zip) : null))].filter(([, l]) => l.length >= 5)
+    .map(([z, l]) => ({ href: `/zip/${z}/`, name: `${z} · ${l[0].cityName}`, count: l.length, z: 12, ...coordOf(l) }))
+    .sort((a, b) => b.count - a.count),
+};
 
 /* ---------- geolocation + distance ------------------------- */
 let userLoc = null;                            // { lat, lng, label }
@@ -246,6 +261,27 @@ function renderBrowse() {
   return sec;
 }
 
+/* ---------- Browse sheet (iOS-style: tabs + map tiles) ----- */
+function browseTile(t) {
+  const a = el('a', 'placetile'); a.href = t.href;
+  if (t.lat && t.lng) a.style.backgroundImage = `linear-gradient(0deg, rgba(20,28,46,.82) 6%, rgba(20,28,46,.12) 58%), url("${tileUrl(t.lat, t.lng, t.z || 11)}")`;
+  a.innerHTML = `<span class="placetile__name">${esc(t.name)}</span><span class="placetile__count">${t.count.toLocaleString()} pros</span>`;
+  return a;
+}
+let browseSeg = 'cities', browseQ = '';
+function renderBrowseGrid() {
+  const grid = $('#browseGrid'); if (!grid) return;
+  const q = browseQ.trim().toLowerCase();
+  const items = BROWSE[browseSeg].filter(t => !q || t.name.toLowerCase().includes(q));
+  grid.innerHTML = '';
+  if (!items.length) { grid.innerHTML = '<p class="sheet__empty">No matches — try another spelling.</p>'; return; }
+  const frag = document.createDocumentFragment();
+  items.slice(0, 400).forEach(t => frag.append(browseTile(t)));
+  grid.append(frag);
+}
+function openBrowse() { $('#browseSheet').hidden = false; document.body.style.overflow = 'hidden'; renderBrowseGrid(); }
+function closeBrowse() { $('#browseSheet').hidden = true; document.body.style.overflow = ''; }
+
 const pickBest = (list) => [...list].sort((a, b) =>
   (b._hasImg - a._hasImg) || (b._score - a._score) || (b.reviews || 0) - (a.reviews || 0));
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -363,7 +399,10 @@ function refreshHeroUser() { if (heroMap) updateHeroMap(HERO_PICKS[heroIdx]); }
 
 /* ---------- 5. Detail modal -------------------------------- */
 
+let lastOpen = null;   // current modal listing — analytics context for call/website/lead
 function openModal(c) {
+  lastOpen = c;
+  track('view_listing', { listing_id: c.id, listing_name: c.name, city: c.cityName, item_category: c.type, tier: c.tier || 'free' });
   const m = $('#modal'); m.hidden = false; document.body.style.overflow = 'hidden';
   const heroEl = $('#mHero'); heroEl.className = 'modal__hero'; heroEl.style.backgroundImage = ''; heroEl.innerHTML = '';
 
@@ -518,6 +557,7 @@ function runSearch(q) {
   if (!q) { activeChip = 'all'; renderChips(); return showRows(); }
   const terms = q.split(/\s+/);
   const hits = pickBest(ALL.filter(c => terms.every(t => c._search.includes(t))));
+  track('search', { search_term: q, results: hits.length });
   showResults(`Results for “${q}”`, hits);
 }
 
@@ -584,6 +624,7 @@ function reflectLoc() {
 function setUserLoc(loc) {
   userLoc = loc;
   try { localStorage.setItem('gacontractors:location', JSON.stringify(loc)); } catch { /* ignore */ }
+  track('select_location', { method: String(loc.label || '').startsWith('ZIP') ? 'zip' : 'geo' });
   reflectLoc();
   redraw();
   refreshHeroUser();   // drop the "you" pin onto the hero map right away
@@ -605,11 +646,15 @@ function init() {
   try { const s = JSON.parse(localStorage.getItem('gacontractors:location') || 'null'); if (s && s.lat && s.lng) userLoc = s; } catch { /* ignore */ }
 
   ensureSpotSprite();   // make the SVG icon set available everywhere (cards, modal)
+  wireLinkTracking(() => lastOpen ? { listing_id: lastOpen.id, listing_name: lastOpen.name, city: lastOpen.cityName } : {});
   renderChips();
   renderHero(0); restartHero();
   showRows();
 
   reflectLoc();
+  // On phones the bottom tab bar is the single persistent bar — keep the floating
+  // location bar collapsed by default so they don't stack; "Nearby" opens it.
+  if (window.matchMedia('(max-width: 720px)').matches) { $('#locBar').hidden = true; document.body.classList.add('locbar-dismissed'); }
   $('#locBtn')?.addEventListener('click', useMyLocation);
   // dismiss → collapse to the floating reopen button (don't vanish forever)
   $('#locClose')?.addEventListener('click', () => {
@@ -638,7 +683,29 @@ function init() {
   $('#scrollTopBtn').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
   $('#modal').addEventListener('click', (e) => { if (e.target.dataset.close !== undefined) closeModal(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); closeBrowse(); } });
+
+  // Browse sheet: tab open, segmented switch, live filter, close
+  $('#browseSheet')?.addEventListener('click', (e) => { if (e.target.dataset.bclose !== undefined) closeBrowse(); });
+  $('#browseSeg')?.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-seg]'); if (!b) return;
+    browseSeg = b.dataset.seg;
+    $('#browseSeg').querySelectorAll('.seg__btn').forEach(x => x.classList.toggle('is-active', x === b));
+    $('#browseSearch').value = ''; browseQ = ''; renderBrowseGrid();
+    $('#browseGrid').scrollIntoView?.({ block: 'nearest' });
+  });
+  $('#browseSearch')?.addEventListener('input', (e) => { browseQ = e.target.value; renderBrowseGrid(); });
+
+  // bottom tab bar (mobile)
+  const setTab = (id) => document.querySelectorAll('.tabbar__item').forEach(t => t.classList.toggle('is-active', t.id === id));
+  $('#tabHome')?.addEventListener('click', () => { setTab('tabHome'); activeChip = 'all'; renderChips(); showRows(); });
+  $('#tabSearch')?.addEventListener('click', () => { setTab('tabSearch'); window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => $('#searchInput')?.focus(), 220); });
+  $('#tabBrowse')?.addEventListener('click', () => { setTab('tabBrowse'); openBrowse(); });
+  $('#tabNearby')?.addEventListener('click', () => {
+    setTab('tabNearby');
+    if ($('#locBar').hidden) { $('#locReopen').hidden = true; $('#locBar').hidden = false; document.body.classList.remove('locbar-dismissed'); }
+    useMyLocation();
+  });
 
   $('#footMeta').textContent = `${ALL.length.toLocaleString()} listings · ${CITIES.length} Georgia cities · ${TYPES.length} trades`;
 }

@@ -32,8 +32,12 @@ import { CLAIM_EMAIL, cardHTML, claimCardHTML, ownCardHTML, spotCardHTML } from 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const VERSION = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version;
 const ASSET_VER = encodeURIComponent(VERSION);
-const BASE_URL = 'https://ga.contractors.artivicolab.com';
+const BASE_URL = 'https://gac.artivicolab.com';
 const SITE_NAME = 'GA.Contractors';
+const GA_ID = 'G-9YDPWCQBVT';   // GA4 — also referenced by js/shared/analytics.mjs
+const GTAG = `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');</script>`;
 const MIN_LISTINGS = 5;   // a place earns its own page at >= 5 listings
 const MAX_ABSORB_MI = 40; // thin place folds into the nearest qualifying city within this radius
 
@@ -175,7 +179,13 @@ const FOOTER = `<footer class="footer">
       <span class="footer__h">For contractors</span>
       <a href="mailto:${CLAIM_EMAIL}?subject=Claim%20my%20listing" target="_blank" rel="noopener">Claim your listing</a>
       <a href="mailto:${CLAIM_EMAIL}?subject=Featured%20placement" target="_blank" rel="noopener">Get featured</a>
-      <a href="mailto:${CLAIM_EMAIL}?subject=Pricing" target="_blank" rel="noopener">See pricing</a>
+      <a href="/pricing/">See pricing</a>
+    </nav>
+    <nav class="footer__col" aria-label="Legal">
+      <span class="footer__h">Legal</span>
+      <a href="/privacy/">Privacy Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/cookies/">Cookie Policy</a>
     </nav>
   </div>
   <div class="footer__bar">
@@ -203,6 +213,14 @@ const LOCBAR = `<div class="locbar" id="locBar">
   <button class="locbar__close" id="locClose" type="button" aria-label="Dismiss">✕</button>
 </div>`;
 
+// Bottom tab bar (mobile) — links on static pages; "Nearby" is wired by page.js.
+const TABBAR = `<nav class="tabbar" aria-label="Primary">
+  <a class="tabbar__item" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a class="tabbar__item" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span>Search</span></a>
+  <a class="tabbar__item is-active" href="/cities/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Browse</span></a>
+  <button class="tabbar__item" id="tabNearby" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>Nearby</span></button>
+</nav>`;
+
 function pageShell({ title, desc, canonical, jsonLd = '', body, noindex = false, geo = null, pageData = null }) {
   const geoMeta = `<meta name="geo.region" content="US-GA"/>
 <meta name="geo.placename" content="${esc(geo?.place ? geo.place + ', Georgia' : 'Georgia')}"/>${geo?.lat ? `\n<meta name="geo.position" content="${geo.lat.toFixed(4)};${geo.lng.toFixed(4)}"/>\n<meta name="ICBM" content="${geo.lat.toFixed(4)}, ${geo.lng.toFixed(4)}"/>` : ''}`;
@@ -213,6 +231,7 @@ function pageShell({ title, desc, canonical, jsonLd = '', body, noindex = false,
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+${GTAG}
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}"/>${noindex ? '\n<meta name="robots" content="noindex,follow"/>' : ''}
 <link rel="canonical" href="${BASE_URL}${canonical}"/>
@@ -243,9 +262,11 @@ ${body}
 </main>
 ${FOOTER}
 ${LOCBAR}
+${TABBAR}
 ${zipScript}${dataScript}<div class="modal" id="modal" hidden>
   <div class="modal__backdrop" data-close></div>
   <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="modal__grab" data-close aria-hidden="true"></div>
     <button class="modal__close" data-close aria-label="Close">✕</button>
     <div class="modal__hero" id="mHero"></div>
     <div class="modal__content">
@@ -571,6 +592,125 @@ write('zips', hubPage({
   }).join('') }],
 }));
 urls.push('/zips/');
+
+/* ---------- pricing page ----------------------------------- */
+function pricingTier({ name, was, now, per, tag, feats, cta, subject, cls = '', btn, badge = '' }) {
+  return `<article class="ptier ${cls}">
+    ${badge ? `<span class="ptier__badge">${esc(badge)}</span>` : ''}
+    <h2 class="ptier__name">${esc(name)}</h2>
+    <div class="ptier__price">${was ? `<s>$${was}</s> ` : ''}<b>$${now}</b>${per ? `<span>/${esc(per)}</span>` : ''}</div>
+    <p class="ptier__tag">${esc(tag)}</p>
+    <ul class="ptier__feats">${feats.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
+    <a class="btn ${btn} btn--block" href="mailto:${CLAIM_EMAIL}?subject=${encodeURIComponent(subject)}" target="_blank" rel="noopener">${esc(cta)}</a>
+  </article>`;
+}
+write('pricing', pageShell({
+  title: `Pricing for contractors | ${SITE_NAME}`,
+  desc: `Simple monthly pricing to feature your contracting business across Georgia. Free listings for every business, plus Standard and Featured upgrades. Cancel anytime.`,
+  canonical: '/pricing/',
+  jsonLd: jsonLd([], { place: 'Pricing', canonical: '/pricing/' }),
+  body: `<section class="pricing">
+    ${crumbs([{ name: 'Home', href: '/' }, { name: 'Pricing' }])}
+    <div class="pricing__head">
+      <span class="pricing__eyebrow">For contractors</span>
+      <h1 class="pricing__title">Get found by homeowners searching your trade</h1>
+      <p class="pricing__sub">Every real business is listed free. Upgrade to stand out in your city, county and ZIP. Cancel anytime.</p>
+      <span class="pricing__sale">Limited-time launch pricing</span>
+    </div>
+    <div class="pricing__grid">
+      ${pricingTier({ name: 'Free listing', now: '0', tag: 'Every real Georgia business is already here.', btn: 'btn--ghost', cta: 'Claim your listing', subject: 'Claim my listing',
+        feats: ['Shown in city, county & ZIP results', 'Map pin, rating & reviews', 'Claim & verify for a Licensed badge'] })}
+      ${pricingTier({ name: 'Standard', was: '49', now: '9', per: 'mo', tag: 'An enhanced listing with photos and links.', btn: 'btn--solid', cta: 'Get Standard', subject: 'Standard placement',
+        feats: ['Photo gallery & service pills', 'Website + directions buttons', 'Placed in the Standard row'] })}
+      ${pricingTier({ name: 'Featured', was: '149', now: '20', per: 'mo', cls: 'ptier--featured', badge: 'Most popular', btn: 'btn--primary', cta: 'Get Featured', subject: 'Featured placement',
+        feats: ['Top-of-page billboard placement', 'Perk ticker, services & live open status', 'Everything in Standard, pinned first'] })}
+    </div>
+    <p class="pricing__foot">Questions? <a href="mailto:${CLAIM_EMAIL}?subject=Pricing%20question" target="_blank" rel="noopener">Get in touch</a> and we'll help you pick the right spot.</p>
+  </section>`,
+}));
+urls.push('/pricing/');
+
+/* ---------- legal / privacy pages -------------------------- */
+const LEGAL_UPDATED = 'June 9, 2026';
+function legalPage(slug, title, intro, sections) {
+  const body = `<section class="legal">
+    ${crumbs([{ name: 'Home', href: '/' }, { name: title }])}
+    <h1 class="legal__title">${esc(title)}</h1>
+    <p class="legal__meta">Last updated ${LEGAL_UPDATED}</p>
+    <p class="legal__intro">${intro}</p>
+    ${sections}
+  </section>`;
+  return pageShell({
+    title: `${title} | ${SITE_NAME}`,
+    desc: `${title} for ${SITE_NAME} — the Georgia contractor directory by Artivicolab.`,
+    canonical: `/${slug}/`, body,
+  });
+}
+const mail = (label) => `<a href="mailto:${CLAIM_EMAIL}">${label}</a>`;   // address never shown as text
+
+write('privacy', legalPage('privacy', 'Privacy Policy',
+  `${SITE_NAME} is a free, public directory of licensed general contractors and remodelers in Georgia, operated by Artivicolab ("we", "us"). This policy explains what we collect and how we use it.`,
+  `<h2>Information we collect</h2>
+   <p>You can browse the whole directory without an account, and we do not ask you to create one. We collect very little:</p>
+   <ul>
+     <li><strong>Location you choose to share.</strong> If you tap "Use my location" or enter a ZIP code, we use it only to show distances and nearby contractors. It is stored locally in your browser (not on our servers) and you can clear it at any time.</li>
+     <li><strong>Basic usage analytics.</strong> Aggregate, non-identifying information such as which pages are popular, to improve the site.</li>
+     <li><strong>Messages you send us.</strong> If you email us (for example, to claim or correct a listing), we keep that correspondence to respond to you.</li>
+   </ul>
+   <h2>Business listings</h2>
+   <p>Contractor listings are compiled from publicly available sources and third-party business data. They may be incomplete or out of date. A business owner can claim, correct, or request removal of their listing by ${mail('emailing us')}.</p>
+   <h2>Cookies &amp; local storage</h2>
+   <p>We use your browser's local storage to remember your location preference. We do not use third-party advertising or tracking cookies. See our <a href="/cookies/">Cookie Policy</a> for details.</p>
+   <h2>Third-party services</h2>
+   <p>Maps are rendered with OpenStreetMap. Listing cards link out to contractors' own websites, phone numbers, and Google Maps. Those third parties have their own privacy practices, which we do not control.</p>
+   <h2>How we share information</h2>
+   <p>We do not sell your personal information. We only share information when required by law or to operate the basic functions of the site (for example, requesting map tiles).</p>
+   <h2>Your choices</h2>
+   <p>You can clear your saved location at any time by dismissing the location bar or clearing your browser storage. To correct or remove a business listing, ${mail('email us')}.</p>
+   <h2>Children</h2>
+   <p>This site is not directed to children under 13 and we do not knowingly collect information from them.</p>
+   <h2>Changes</h2>
+   <p>We may update this policy; the "last updated" date above reflects the latest version.</p>
+   <h2>Contact</h2>
+   <p>Questions about privacy? ${mail('Email us')} and we'll help.</p>`));
+urls.push('/privacy/');
+
+write('terms', legalPage('terms', 'Terms of Service',
+  `By using ${SITE_NAME} (the "Service"), operated by Artivicolab, you agree to these terms. If you don't agree, please don't use the Service.`,
+  `<h2>What the Service is</h2>
+   <p>${SITE_NAME} is a free, informational directory that helps Georgia homeowners discover licensed general contractors and remodelers. We are a directory only — we are not a party to any agreement you make with a contractor, and we do not perform construction work.</p>
+   <h2>No endorsement; verify for yourself</h2>
+   <p>A listing on ${SITE_NAME} is not an endorsement, recommendation, or guarantee. Always verify a contractor's license, insurance, references, and pricing directly before hiring. Georgia license status can be checked with the Georgia Secretary of State.</p>
+   <h2>Accuracy of listings</h2>
+   <p>Listing data is gathered from public and third-party sources and may contain errors or be out of date. Call ahead to confirm details. A "Licensed &amp; Insured" badge appears only after a business verifies that information with us; its absence doesn't mean a contractor is unlicensed.</p>
+   <h2>Paid placements</h2>
+   <p>"Featured" (Premium) and "Standard" placements are paid advertising positions. They affect placement and presentation only — they are not an endorsement and do not change the verification standard for any badge.</p>
+   <h2>Acceptable use</h2>
+   <p>Don't scrape, copy, or republish the directory in bulk; don't misuse contact information (e.g., spam); and don't attempt to disrupt the Service.</p>
+   <h2>Disclaimers &amp; limitation of liability</h2>
+   <p>The Service is provided "as is," without warranties of any kind. To the fullest extent permitted by law, Artivicolab is not liable for any damages arising from your use of the Service, from any listing, or from any dealings with a contractor found here.</p>
+   <h2>For contractors</h2>
+   <p>Business owners may claim, correct, or remove their listing by ${mail('emailing us')}.</p>
+   <h2>Governing law</h2>
+   <p>These terms are governed by the laws of the State of Georgia, USA.</p>
+   <h2>Changes &amp; contact</h2>
+   <p>We may update these terms; continued use means you accept the changes. Questions? ${mail('Email us')}.</p>`));
+urls.push('/terms/');
+
+write('cookies', legalPage('cookies', 'Cookie Policy',
+  `This page explains the cookies and local storage ${SITE_NAME} uses. The short version: we use the bare minimum, and no advertising trackers.`,
+  `<h2>What we use</h2>
+   <ul>
+     <li><strong>Local storage (your location).</strong> When you share your location or enter a ZIP, we save it in your browser so distances persist between pages. It never leaves your device except as coordinates sent to the map provider to draw tiles.</li>
+     <li><strong>Essential function only.</strong> We do not use third-party advertising or cross-site tracking cookies.</li>
+   </ul>
+   <h2>Third-party content</h2>
+   <p>Map tiles are loaded from OpenStreetMap, and fonts from Google Fonts; those requests are subject to those providers' policies.</p>
+   <h2>Managing it</h2>
+   <p>Clear your saved location by dismissing the location bar, or clear your browser's site data to remove everything. See our <a href="/privacy/">Privacy Policy</a> for more.</p>
+   <h2>Contact</h2>
+   <p>Questions? ${mail('Email us')}.</p>`));
+urls.push('/cookies/');
 
 /* ---------- 8. sitemap / robots / 404 ---------------------- */
 const indexable = ['/', ...urls];

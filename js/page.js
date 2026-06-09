@@ -12,6 +12,7 @@ import { tileUrl } from './shared/geo.mjs';
 import { spotUse } from './shared/icons.mjs';
 import { loadLeaflet, mapPin, observeCardMap } from './shared/maps.mjs';
 import { CLAIM_EMAIL } from './shared/components.mjs';
+import { track, wireLinkTracking } from './shared/analytics.mjs';
 
 const $ = (s, r = document) => r.querySelector(s);
 const el = (t, c) => { const n = document.createElement(t); if (c) n.className = c; return n; };
@@ -93,8 +94,11 @@ const btnLink = (txt, href, cls) => { const a = el('a', 'btn ' + cls); a.href = 
 // icon + label action button (SVG icon from the #spot-sprite, no emoji) — same as home
 const iconLink = (iconId, label, href, cls) => { const a = btnLink('', href, cls); a.innerHTML = `${spotUse(iconId)} <span>${esc(label)}</span>`; return a; };
 
+let lastOpen = null;   // current modal listing — analytics context for call/website/lead
 function openModal(id) {
   const c = DATA[id]; if (!c) return;
+  lastOpen = { id, ...c };
+  track('view_listing', { listing_id: id, listing_name: c.name, city: c.cityName, item_category: c.type, tier: c.tier || 'free' });
   const m = $('#modal'); m.hidden = false; document.body.style.overflow = 'hidden';
   const hero = $('#mHero'); hero.className = 'modal__hero'; hero.style.backgroundImage = ''; hero.innerHTML = '';
   // paid demo listings → gallery carousel + distance-map slide; a photo → its image;
@@ -290,7 +294,7 @@ for (const grid of document.querySelectorAll('.grid')) {
     grid.append(...items, ...tail);    // reorder in the DOM (append moves existing nodes)
     shown = PAGE; render();
   };
-  if (sel) { sel.addEventListener('change', applySort); gridReSorts.push(() => { if (sel.value === 'distance') applySort(); }); }
+  if (sel) { sel.addEventListener('change', () => { track('sort_change', { sort: sel.value }); applySort(); }); gridReSorts.push(() => { if (sel.value === 'distance') applySort(); }); }
   render();
 }
 
@@ -440,6 +444,7 @@ function reflectLoc() {
 function setUserLoc(loc) {
   userLoc = loc;
   try { localStorage.setItem('gacontractors:location', JSON.stringify(loc)); } catch { /* ignore */ }
+  track('select_location', { method: String(loc.label || '').startsWith('ZIP') ? 'zip' : 'geo' });
   reflectLoc();
   refreshHeroUser();                 // drop the "you" pin on the hero map
   refreshPlaceUser();                // drop the "you" pin on the overview map
@@ -469,8 +474,12 @@ if (savedZip && $('#zipInput')) $('#zipInput').value = savedZip;
 })();
 
 reflectLoc();
+// On phones the bottom tab bar is the single persistent bar — keep the floating
+// location bar collapsed by default so they don't stack; "Nearby" opens it.
+if (window.matchMedia('(max-width: 720px)').matches) { const lb = $('#locBar'); if (lb) lb.hidden = true; document.body.classList.add('locbar-dismissed'); }
 refreshCardDistances();   // a location restored from localStorage → badge cards now
 upgradeCardMaps();        // no-photo cards → live centred maps (lazy)
+wireLinkTracking(() => lastOpen ? { listing_id: lastOpen.id, listing_name: lastOpen.name, city: lastOpen.cityName } : {});
 $('#locBtn')?.addEventListener('click', useMyLocation);
 $('#locClose')?.addEventListener('click', () => { $('#locBar').hidden = true; document.body.classList.add('locbar-dismissed'); });
 $('#zipWrap')?.addEventListener('submit', (e) => {
@@ -487,8 +496,15 @@ $('#zipWrap')?.addEventListener('submit', (e) => {
   const dest = ZIP_INDEX[zip];
   if (dest && dest !== location.pathname) {
     try { sessionStorage.setItem('gacontractors:pendingzip', zip); } catch { /* ignore */ }
+    track('zip_go', { zip, dest });
     location.href = dest; return;
   }
   inp.setCustomValidity('No contractors found for that ZIP'); inp.reportValidity();
 });
 $('#zipInput')?.addEventListener('input', () => $('#zipInput').setCustomValidity(''));
+
+// bottom-tab "Nearby" — reveal the location bar (also acts as its reopen) + locate
+$('#tabNearby')?.addEventListener('click', () => {
+  const bar = $('#locBar'); if (bar) { bar.hidden = false; document.body.classList.remove('locbar-dismissed'); }
+  useMyLocation();
+});
