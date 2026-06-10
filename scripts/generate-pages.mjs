@@ -37,7 +37,7 @@ const SITE_NAME = 'GA.Contractors';
 const GA_ID = 'G-9YDPWCQBVT';   // GA4 — also referenced by js/shared/analytics.mjs
 const GTAG = `<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');</script>`;
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied'});gtag('config','${GA_ID}');</script>`;
 const MIN_LISTINGS = 5;   // a place earns its own page at >= 5 listings
 const MAX_ABSORB_MI = 40; // thin place folds into the nearest qualifying city within this radius
 

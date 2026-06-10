@@ -13,6 +13,7 @@ import { spotUse } from './shared/icons.mjs';
 import { loadLeaflet, mapPin, observeCardMap } from './shared/maps.mjs';
 import { CLAIM_EMAIL } from './shared/components.mjs';
 import { track, wireLinkTracking } from './shared/analytics.mjs';
+import { mountConsent } from './shared/consent.mjs';
 
 const $ = (s, r = document) => r.querySelector(s);
 const el = (t, c) => { const n = document.createElement(t); if (c) n.className = c; return n; };
@@ -477,6 +478,7 @@ reflectLoc();
 refreshCardDistances();   // a location restored from localStorage → badge cards now
 upgradeCardMaps();        // no-photo cards → live centred maps (lazy)
 wireLinkTracking(() => lastOpen ? { listing_id: lastOpen.id, listing_name: lastOpen.name, city: lastOpen.cityName } : {});
+mountConsent();           // cookie-consent bar (gates analytics_storage until accepted)
 $('#locBtn')?.addEventListener('click', useMyLocation);
 $('#locClose')?.addEventListener('click', () => { $('#locBar').hidden = true; document.body.classList.add('locbar-dismissed'); });
 $('#zipWrap')?.addEventListener('submit', (e) => {

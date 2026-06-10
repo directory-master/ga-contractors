@@ -16,6 +16,7 @@ import { SPOT_SPRITE, spotUse } from './shared/icons.mjs';
 import { loadLeaflet, mapPin, observeCardMap } from './shared/maps.mjs';
 import { cardHTML, spotCardHTML, claimCardHTML, placetileHTML, CLAIM_EMAIL } from './shared/components.mjs';
 import { track, wireLinkTracking } from './shared/analytics.mjs';
+import { mountConsent } from './shared/consent.mjs';
 
 /* ---------- 1. Prepare the data ---------------------------- */
 
@@ -653,6 +654,7 @@ function init() {
   try { const s = JSON.parse(localStorage.getItem('gacontractors:location') || 'null'); if (s && s.lat && s.lng) userLoc = s; } catch { /* ignore */ }
 
   ensureSpotSprite();   // make the SVG icon set available everywhere (cards, modal)
+  mountConsent();       // cookie-consent bar (gates analytics_storage until accepted)
   wireLinkTracking(() => lastOpen ? { listing_id: lastOpen.id, listing_name: lastOpen.name, city: lastOpen.cityName } : {});
   renderChips();
   renderHero(0); restartHero();
