@@ -709,7 +709,7 @@ urls.push('/cookies/');
 /* ---------- 8. sitemap / robots / 404 ---------------------- */
 const indexable = ['/', ...urls];
 writeFileSync(join(ROOT, 'sitemap.xml'),
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemap.org/schemas/sitemap/0.9">\n` +
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   indexable.map(u => `  <url><loc>${BASE_URL}${u}</loc></url>`).join('\n') + `\n</urlset>\n`);
 writeFileSync(join(ROOT, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${BASE_URL}/sitemap.xml\n`);
 writeFileSync(join(ROOT, '404.html'), pageShell({
