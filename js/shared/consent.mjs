@@ -34,7 +34,7 @@ export function mountConsent() {
   bar.setAttribute('role', 'dialog');
   bar.setAttribute('aria-label', 'Cookie consent');
   bar.innerHTML = `
-    <p class="cookiebar__text">We use cookies to measure traffic and improve GA.Contractors.
+    <p class="cookiebar__text">We use cookies to measure traffic and improve Georgia Contractors.
       You can accept or decline analytics cookies. See our
       <a href="/privacy/">Privacy Policy</a>.</p>
     <div class="cookiebar__actions">

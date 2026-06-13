@@ -6,11 +6,30 @@
 //  hydrates them). Isomorphic: no DOM, no Node-only APIs.
 // ============================================================
 import { esc, initials, telHref, openStatus } from './format.mjs';
-import { colorFor, stockFor } from './palette.mjs';
+import { colorFor, stockFor, tintedBg } from './palette.mjs';
 import { tileUrl, PIN_SVG } from './geo.mjs';
 import { spotUse, perkIcon } from './icons.mjs';
 
 export const CLAIM_EMAIL = 'artivicolab@gmail.com'; // only ever in a mailto href — never visible text
+
+/* ---------- new photo card (.pcard) — SSR + hydrated by app.js/page.js ----------
+   Same markup the home builds, so the generated listings grid matches the home. */
+const STAR_C = (sz = 10, color = '#F6B73C') => `<svg class="star" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="${color}"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.2 5.8 20.9l1.6-7L2 9.2l7.1-.6z"/></svg>`;
+const HEART_C = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 1 0-7.8 7.8l8.8 8.9 8.8-8.9a5.5 5.5 0 0 0 0-7.8z"/></svg>`;
+const PIN_C = `<svg class="ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
+// photo, else a map-tile placeholder (when located) or a tinted/initials block
+function pcardMedia(c) {
+  const img = imgOf(c);
+  if (img) return `<img src="${esc(img)}" alt="${esc(c.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${stockFor(c.id)}'"/>`;
+  if (c.lat && c.lng) return `<div class="ph ph--map" style="background-image:linear-gradient(0deg,rgba(19,49,42,.20),rgba(19,49,42,.04)),url('${tileUrl(c.lat, c.lng, 12)}')"><span class="ph__pin">${PIN_SVG('#13312a')}</span><span class="ph__label">${PIN_C} ${esc(c.cityName || 'Georgia')}</span></div>`;
+  return `<div class="ph" style="background-image:${tintedBg(c.id, 'cc')};background-size:cover;background-position:center">${esc(initials(c.name))}</div>`;
+}
+export function appCardHTML(c) {
+  return `<div class="pcard" tabindex="0" data-id="${esc(c.id)}">
+    <div class="pcard__ph">${pcardMedia(c)}${c.rating ? `<span class="pcard__rt">${STAR_C(10)} ${c.rating}</span>` : ''}<button class="pcard__save" type="button" aria-label="Save">${HEART_C}</button></div>
+    <div class="pcard__b"><div class="pcard__n">${esc(c.name)}</div><div class="pcard__sub">${esc(c.type)} · ${esc(c.cityName)}</div></div>
+  </div>`;
+}
 
 // best usable image: a real http photo, else the first gallery image (paid demos)
 const hasImg = (c) => typeof c.image === 'string' && /^https?:/.test(c.image);

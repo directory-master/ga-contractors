@@ -188,9 +188,14 @@ Adding a field means teaching `app.js` to use it — nothing is auto-surfaced.
 
 ## Conventions
 
-- **Site name is `GA.Contractors`** — keep it identical across the `<title>`, the
-  brand wordmark in the top bar + footer, and any share/`mailto` copy. Don't
-  reintroduce the bare "Contractor".
+- **Writing style: no dashes or hyphens in prose.** Do not use an em dash, an en
+  dash, or a hyphen as a pause inside any sentence or paragraph, in the UI copy,
+  commit messages, or these docs. That punctuation reads as AI written. Rewrite the
+  sentence with a comma, a period, or parentheses instead. Hyphens stay only inside
+  code, file paths, and kebab case slugs such as `build:pages` or `ga-counties`.
+- **Site name is `Georgia Contractors`.** Keep it identical across the `<title>`,
+  the brand wordmark in the top bar and footer, and any share or `mailto` copy. The
+  generator constant `SITE_NAME` is the source of truth. Do not write `GA.Contractors`.
 - `id` is a stable key — it seeds the placeholder gradient/photo/initials, so a
   given business always renders the same. Never rewrite existing ids.
 - **Every "no photo" card must still look intentional** — that's the whole point
