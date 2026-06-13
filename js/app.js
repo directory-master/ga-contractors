@@ -14,6 +14,7 @@ import { tileUrl } from './shared/geo.mjs';
 import { loadLeaflet } from './shared/maps.mjs';
 import { track, wireLinkTracking } from './shared/analytics.mjs';
 import { mountConsent } from './shared/consent.mjs';
+import { initPWA } from './shared/pwa.mjs';
 // the reusable render layer (cards, Premium/Standard rows, v20 modal, theming),
 // shared with the generated pages (js/page.js) — ONE source of truth.
 import { createListingUI, applyTheme, ensureSpotSprite, isWide, IC, STAR } from './shared/listing-ui.mjs';
@@ -325,7 +326,15 @@ function renderSeason() {
     <div class="season__s">${esc(s.sub)}</div>
     <button class="season__cta" type="button">${esc(s.cta)} →</button></div>`;
   host.querySelector('.season__cta').addEventListener('click', () => {
-    if (s.q) { $('#searchInput').value = s.q; runSearch(s.q); } else { $('#premium').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    // run the themed search, but never dead-end: if our directory has no match
+    // for that trade, fall back to the statewide Top Rated list so the click
+    // always lands the user on real contractors.
+    if (s.q) {
+      const terms = s.q.toLowerCase().split(/\s+/);
+      const hits = pickBest(ALL.filter(c => terms.every(t => c._search.includes(t))));
+      if (hits.length) { $('#searchInput').value = s.q; activeChip = 'all'; renderChips(); showResults(`Results for “${s.q}”`, hits, terms); return; }
+    }
+    $('#searchInput').value = ''; activeChip = 'top'; renderChips(); showResults('Top Rated in Georgia', RATED);
   });
 }
 
@@ -387,6 +396,7 @@ function init() {
 
   ensureSpotSprite();
   mountConsent();
+  initPWA();
   wireLinkTracking(() => { const c = ui.getLastOpen(); return c ? { listing_id: c.id, listing_name: c.name, city: c.cityName } : {}; });
 
   applyTheme();

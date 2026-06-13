@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/app.css?v=0.16.2" />
+  <link rel="stylesheet" href="css/app.css?v=0.17.1" />
 
   <!-- ░░ Icons / PWA ░░ -->
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -69,7 +69,12 @@
             <div class="hd__brand">Georgia Contractors</div>
             <div class="hd__greet" id="hdGreet"></div>
           </div>
-          <span class="hd__ava" aria-hidden="true">GA</span>
+          <div class="hd__right">
+            <button class="hd__install" id="installBtn" type="button" aria-label="Install app" title="Install app" hidden>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11M8 11l4 4 4-4M5 21h14"/></svg>
+            </button>
+            <span class="hd__ava" aria-hidden="true">GA</span>
+          </div>
         </div>
         <h1 class="hd__h1">Every registered contractor in Georgia.<br><span>Ranked by real reviews.</span></h1>
         <p class="hd__lede">Browse Georgia's contractor directory. Compare local pros by trade and rating, then call them directly.</p>
@@ -270,6 +275,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/app.js?v=0.16.2"></script>
+  <script type="module" src="js/app.js?v=0.17.1"></script>
 </body>
 </html>

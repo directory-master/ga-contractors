@@ -32,7 +32,7 @@
 <meta name="theme-color" content="#13312a"/>
 <meta name="apple-mobile-web-app-title" content="Georgia Contractors"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<link rel="stylesheet" href="/css/app.css?v=0.16.2"/>
+<link rel="stylesheet" href="/css/app.css?v=0.17.1"/>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Georgia Contractors","item":"https://gac.artivicolab.com/"},{"@type":"ListItem","position":2,"name":"Macon County","item":"https://gac.artivicolab.com/county/macon/"}]},{"@type":"ItemList","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"GeneralContractor","name":"Patriot Buildings LLC","address":{"@type":"PostalAddress","addressLocality":"Montezuma","addressRegion":"GA","postalCode":"31063","streetAddress":"45 Fields Crossing Rd, Montezuma, GA 31063"},"telephone":"(478) 954-8829","url":"http://patriotbuildingsllc.com/","geo":{"@type":"GeoCoordinates","latitude":32.28052902,"longitude":-84.00177002}}},{"@type":"ListItem","position":2,"item":{"@type":"GeneralContractor","name":"Yoder Portable Buildings","address":{"@type":"PostalAddress","addressLocality":"Montezuma","addressRegion":"GA","postalCode":"31063","streetAddress":"205 Airport Dr, Montezuma, GA 31063"},"telephone":"(478) 472-1220","url":"http://www.yoderportable.com/","geo":{"@type":"GeoCoordinates","latitude":32.30425644,"longitude":-84.0100708}}},{"@type":"ListItem","position":3,"item":{"@type":"GeneralContractor","name":"Julian construction","address":{"@type":"PostalAddress","addressLocality":"Ideal","addressRegion":"GA","postalCode":"31041","streetAddress":"103 Oak St, Ideal, GA 31041"},"telephone":"(478) 662-0451","geo":{"@type":"GeoCoordinates","latitude":32.37348557,"longitude":-84.18304443}}},{"@type":"ListItem","position":4,"item":{"@type":"GeneralContractor","name":"RRS Enterprises LLC","address":{"@type":"PostalAddress","addressLocality":"Marshallville","addressRegion":"GA","postalCode":"31057","streetAddress":"318 Main St W, Marshallville, GA 31057"},"telephone":"(800) 432-5112","url":"https://www.rrs-llc.com/contact-us/","geo":{"@type":"GeoCoordinates","latitude":32.45568466,"longitude":-83.94703674}}},{"@type":"ListItem","position":5,"item":{"@type":"GeneralContractor","name":"300 Camellia Blvd","address":{"@type":"PostalAddress","addressLocality":"Marshallville","addressRegion":"GA","postalCode":"31057","streetAddress":"300 Camellia Blvd, Marshallville, GA 31057"},"geo":{"@type":"GeoCoordinates","latitude":32.46088028,"longitude":-83.93973541}}},{"@type":"ListItem","position":6,"item":{"@type":"GeneralContractor","name":"Wingard Construction","address":{"@type":"PostalAddress","addressLocality":"Montezuma","addressRegion":"GA","postalCode":"31063","streetAddress":"372 Shiloh Church Rd, Montezuma, GA 31063"},"telephone":"(478) 472-2380","geo":{"@type":"GeoCoordinates","latitude":32.29793549,"longitude":-83.9995575}}},{"@type":"ListItem","position":7,"item":{"@type":"GeneralContractor","name":"Mjw Contracting","address":{"@type":"PostalAddress","addressLocality":"Montezuma","addressRegion":"GA","postalCode":"31063","streetAddress":"301 Drayton St, Montezuma, GA 31063"},"telephone":"(478) 472-9130","geo":{"@type":"GeoCoordinates","latitude":32.3031044,"longitude":-84.03019714}}},{"@type":"ListItem","position":8,"item":{"@type":"GeneralContractor","name":"Plank's Specialties","address":{"@type":"PostalAddress","addressLocality":"Montezuma","addressRegion":"GA","postalCode":"31063","streetAddress":"716 McKenzie Rd, Montezuma, GA 31063"},"telephone":"(478) 472-0074","geo":{"@type":"GeoCoordinates","latitude":32.301548,"longitude":-83.873909}}},{"@type":"ListItem","position":9,"item":{"@type":"GeneralContractor","name":"501 Spaulding Rd","address":{"@type":"PostalAddress","addressLocality":"Montezuma","addressRegion":"GA","postalCode":"31063","streetAddress":"501 Spaulding Rd, Montezuma, GA 31063"},"geo":{"@type":"GeoCoordinates","latitude":32.29300308,"longitude":-84.018013}}},{"@type":"ListItem","position":10,"item":{"@type":"GeneralContractor","name":"Allen Contracting","address":{"@type":"PostalAddress","addressLocality":"Montezuma","addressRegion":"GA","postalCode":"31063","streetAddress":"301 Drayton St, Montezuma, GA 31063"},"telephone":"(478) 472-2473","geo":{"@type":"GeoCoordinates","latitude":32.3031044,"longitude":-84.03019714}}},{"@type":"ListItem","position":11,"item":{"@type":"GeneralContractor","name":"X5construction","address":{"@type":"PostalAddress","addressLocality":"Montezuma","addressRegion":"GA","postalCode":"31063","streetAddress":"8 Shiloh Church Rd, Montezuma, GA 31063"},"telephone":"(229) 591-9511","geo":{"@type":"GeoCoordinates","latitude":32.29751205,"longitude":-83.99954224}}},{"@type":"ListItem","position":12,"item":{"@type":"HomeAndConstructionBusiness","name":"Like New Home Repair","address":{"@type":"PostalAddress","addressLocality":"Oglethorpe","addressRegion":"GA","streetAddress":"Private Address in Oglethorpe, Georgia"},"telephone":"(229) 303-8381","url":"http://likenewhomerepair.com/","geo":{"@type":"GeoCoordinates","latitude":32.29433823,"longitude":-84.06154633}}}]}]}</script>
 </head>
 <body class="home" data-place="Macon County">
@@ -44,7 +44,10 @@
 <section class="hd">
   <div class="hd__bar">
     <div><div class="hd__brand">Georgia Contractors</div><div class="hd__greet" id="hdGreet"></div></div>
-    <span class="hd__ava" aria-hidden="true">GA</span>
+    <div class="hd__right">
+      <button class="hd__install" id="installBtn" type="button" aria-label="Install app" title="Install app" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11M8 11l4 4 4-4M5 21h14"/></svg></button>
+      <span class="hd__ava" aria-hidden="true">GA</span>
+    </div>
   </div>
   <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span>›</span><a href="/counties/">Counties</a><span>›</span><span aria-current="page">Macon County</span></nav>
   <h1 class="hd__h1">Contractors in <span>Macon County</span></h1>
@@ -134,7 +137,7 @@
   <div class="afoot__brand">
     <img class="afoot__logo" src="/apple-icon-120x120.png" alt="" width="34" height="34"/>
     <div><div class="afoot__bn">Georgia Contractors</div><div class="afoot__bt">Every registered pro in the Peach State.</div></div>
-    <div class="afoot__meta"><small>© 2026 Georgia Contractors · v0.16.2</small><br>Made in Georgia by <a href="https://artivicolab.com" rel="noopener">Artivicolab</a></div>
+    <div class="afoot__meta"><small>© 2026 Georgia Contractors · v0.17.1</small><br>Made in Georgia by <a href="https://artivicolab.com" rel="noopener">Artivicolab</a></div>
   </div>
 </footer>
   </main>
@@ -189,6 +192,6 @@
     <div class="modal__callbar" id="mCallbar"></div>
   </div>
 </div>
-<script type="module" src="/js/page.js?v=0.16.2"></script>
+<script type="module" src="/js/page.js?v=0.17.1"></script>
 </body>
 </html>

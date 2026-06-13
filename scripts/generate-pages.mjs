@@ -438,7 +438,10 @@ function placeHeader(place, trail, pool) {
   return `<section class="hd">
   <div class="hd__bar">
     <div><div class="hd__brand">${SITE_NAME}</div><div class="hd__greet" id="hdGreet"></div></div>
-    <span class="hd__ava" aria-hidden="true">GA</span>
+    <div class="hd__right">
+      <button class="hd__install" id="installBtn" type="button" aria-label="Install app" title="Install app" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11M8 11l4 4 4-4M5 21h14"/></svg></button>
+      <span class="hd__ava" aria-hidden="true">GA</span>
+    </div>
   </div>
   ${crumbs(trail)}
   <h1 class="hd__h1">Contractors in <span>${esc(place)}</span></h1>
@@ -744,6 +747,26 @@ const BROWSE_INDEX = {
   zips: liveZips.map(z => ({ href: `/zip/${z.zip}/`, name: `${z.zip} · ${z.cityName}`, count: z.listings.length, ...centroidOf(z.listings) })),
 };
 writeFileSync(join(ROOT, 'browse-index.json'), JSON.stringify(BROWSE_INDEX));
+
+/* ---------- service worker (PWA, version-stamped) ---------- */
+writeFileSync(join(ROOT, 'sw.js'), `// Georgia Contractors service worker — generated, v${VERSION}.
+// Network-first for pages (always fresh online, cached offline); cache-first for
+// versioned static assets. Cross-origin requests (map tiles, fonts) are untouched.
+const CACHE = 'gac-v${VERSION}';
+const PRECACHE = ['/', '/css/app.css?v=${ASSET_VER}', '/js/app.js?v=${ASSET_VER}', '/manifest.json', '/android-icon-192x192.png', '/android-icon-512x512.png'];
+self.addEventListener('install', (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).catch(() => {})); });
+self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  if (new URL(req.url).origin !== self.location.origin) return;
+  if (req.mode === 'navigate') {
+    e.respondWith(fetch(req).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; }).catch(() => caches.match(req).then((r) => r || caches.match('/'))));
+    return;
+  }
+  e.respondWith(caches.match(req).then((r) => r || fetch(req).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; })));
+});
+`);
 
 /* ---------- 8. sitemap / robots / 404 ---------------------- */
 const indexable = ['/', ...urls];

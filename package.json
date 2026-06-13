@@ -1,6 +1,6 @@
 {
   "name": "contractor",
-  "version": "0.16.2",
+  "version": "0.17.1",
   "private": true,
   "type": "module",
   "description": "GA.Contractors — streaming-style discovery for Georgia contractors. Prime Video rails × YouTube cards, cobalt-blue blueprint palette.",

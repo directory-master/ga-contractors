@@ -12,6 +12,7 @@ import { ratingScore } from './shared/format.mjs';
 import { createListingUI, applyTheme, ensureSpotSprite, isWide } from './shared/listing-ui.mjs';
 import { track, wireLinkTracking } from './shared/analytics.mjs';
 import { mountConsent } from './shared/consent.mjs';
+import { initPWA } from './shared/pwa.mjs';
 
 const $  = (s, r = document) => r.querySelector(s);
 
@@ -132,6 +133,7 @@ function init() {
 
   ensureSpotSprite();
   mountConsent();
+  initPWA();
   wireLinkTracking(() => { const c = ui.getLastOpen(); return c ? { listing_id: c.id, listing_name: c.name, city: c.cityName } : {}; });
 
   applyTheme();
